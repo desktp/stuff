@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Simple Chat</title>
+    <style type="text/css">
+        .container {
+            background-color: #99CCFF;
+            border: thick solid #808080;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Projetor
+    </h1>
+    <div class="container">
+        <ul id="discussion"></ul>
+    </div>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
+    <script src="http://localhost:61726/signalr/hubs"></script> <!-- tem que apontar para o servidor! --> 
+    <script type="text/javascript">
+        $(function () {
+            // Habilita CORS
+            jQuery.support.cors = true;
+            
+            // Declara endereço do servidor
+            $.connection.hub.url = "http://localhost:61726/signalr";
+            // chatHub é o nome do Hub definido no código do server
+            var chat = $.connection.chatHub;
+            
+            $.connection.hub.logging = true;
+
+            
+            // Função que o SERVIDOR chama
+            chat.client.lancarPergunta = function (pergunta) {
+                var encodedMsg = $('<div />').text(pergunta).html();
+                $('#discussion').append('<li>Professor perguntou: ' + encodedMsg + '</li>');
+            };
+            
+            // Função que o SERVIDOR chama
+            chat.client.responderPergunta = function () {
+                $('#discussion').append('<li>Aluno respondeu!</li>')
+            }
+            
+            // Abre conexsão
+            $.connection.hub.start();
+            
+        });
+    </script>
+</body>
+</html>
