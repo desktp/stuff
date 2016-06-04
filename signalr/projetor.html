@@ -19,7 +19,8 @@
     </div>
     <script src="Scripts/jquery-1.10.2.min.js"></script>
     <script src="Scripts/jquery.signalR-2.1.2.min.js"></script>
-    <script src="http://localhost:50806/signalr/hubs"></script> <!-- tem que apontar para o servidor! --> 
+    <!--<script src="http://localhost:50806/signalr/hubs"></script>  tem que apontar para o servidor!  -->
+    <script src="http://tlm-api-dev.azurewebsites.net/signalr/hubs"></script>
     <script type="text/javascript">
     function getUrlParameter(sParam) {
             var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -41,13 +42,15 @@
             jQuery.support.cors = true;
             
             // Declara endereço do servidor
-            $.connection.hub.url = "http://localhost:50806/signalr";
+            //$.connection.hub.url = "http://localhost:50806/signalr";
+            $.connection.hub.url = "http://tlm-api-dev.azurewebsites.net/signalr";
             // eventoHub é o nome do Hub definido no código do server
             var evento = $.connection.eventoHub;
             
             $.connection.hub.logging = true;
 
-            var idEvento = getUrlParameter('id');
+            var idEvento = getUrlParameter('idEvento');
+
             
             
             // Função que o SERVIDOR chama
@@ -55,6 +58,10 @@
                 var encodedMsg = $('<div />').text(pergunta).html();
                 $('#discussion').append('<li>Professor perguntou: ' + encodedMsg + '</li>');
             };
+            
+            evento.client.joinEvento = function (message) {
+                $('#discussion').append('<li>' + message + ' entrou no evento!</li>');
+            }
             
             // Função que o SERVIDOR chama
             evento.client.responderPergunta = function () {
@@ -64,7 +71,7 @@
             // Abre conexsão
             $.connection.hub.start().done(function(){
                 if (idEvento){
-                    evento.server.joinEvento(idEvento);
+                    evento.server.joinEvento(idEvento, null);
                 };
             });
         });
